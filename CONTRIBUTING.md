@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for taking the time to improve Precision Cursor.
+Thanks for taking the time to improve DPI Assistant.
 
 ## Development Setup
 
@@ -32,6 +32,6 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test.ps1 -Configuration Relea
 
 ## Project Notes
 
-- `PrecisionCursor.Core` should stay independent from Windows Forms so cursor logic remains easy to test.
+- `DpiAssistant.Core` should stay independent from Windows Forms so cursor logic remains easy to test.
 - The tray app owns global hooks, raw input, notifications, and application lifecycle.
 - Safety matters: `Esc` must remain a reliable immediate disable path.

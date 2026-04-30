@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using PrecisionCursor.Core;
+using DpiAssistant.Core;
 
-namespace PrecisionCursor
+namespace DpiAssistant
 {
     internal sealed class MouseLockService : IDisposable
     {
@@ -14,7 +14,7 @@ namespace PrecisionCursor
         private readonly NativeMethods.LowLevelMouseProc _hookCallback;
         private RawMouseInputWindow _rawInputWindow;
         private IntPtr _hookId = IntPtr.Zero;
-        private bool _enabled;
+        private volatile bool _enabled;
         private bool _disposed;
         private RelativeLineLock _lineLock;
         private Point? _lastProgrammaticPoint;
@@ -46,7 +46,7 @@ namespace PrecisionCursor
                 return;
             }
 
-            _rawInputWindow = new RawMouseInputWindow();
+            _rawInputWindow = new RawMouseInputWindow(IsEnabledForInputProcessing);
             _rawInputWindow.MouseMoved += OnRawMouseMoved;
             _hookId = InstallHook(_hookCallback);
         }
@@ -70,7 +70,7 @@ namespace PrecisionCursor
             lock (_sync)
             {
                 changed = !_enabled;
-                _lineLock = new RelativeLineLock(Cursor.Position);
+                _lineLock = CreateLineLock();
                 _lastProgrammaticPoint = null;
                 _enabled = true;
             }
@@ -128,7 +128,9 @@ namespace PrecisionCursor
         {
             try
             {
-                if (nCode >= 0 && wParam == new IntPtr(NativeMethods.WM_MOUSEMOVE))
+                int message = wParam.ToInt32();
+
+                if (MouseHookProcessingPolicy.ShouldInspectMouseMove(nCode, message, _enabled))
                 {
                     NativeMethods.MSLLHOOKSTRUCT hookData =
                         (NativeMethods.MSLLHOOKSTRUCT)Marshal.PtrToStructure(
@@ -169,7 +171,12 @@ namespace PrecisionCursor
             return NativeMethods.CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
 
-        private void OnRawMouseMoved(object sender, RawMouseDeltaEventArgs e)
+        private bool IsEnabledForInputProcessing()
+        {
+            return _enabled;
+        }
+
+        private void OnRawMouseMoved(object sender, int deltaX, int deltaY)
         {
             Point? target = null;
 
@@ -182,10 +189,10 @@ namespace PrecisionCursor
 
                 if (_lineLock == null)
                 {
-                    _lineLock = new RelativeLineLock(Cursor.Position);
+                    _lineLock = CreateLineLock();
                 }
 
-                target = _lineLock.ApplyDelta(e.DeltaX, e.DeltaY);
+                target = _lineLock.ApplyDelta(deltaX, deltaY);
             }
 
             if (target.HasValue)
@@ -248,6 +255,11 @@ namespace PrecisionCursor
 
                 return hookId;
             }
+        }
+
+        private static RelativeLineLock CreateLineLock()
+        {
+            return new RelativeLineLock(Cursor.Position, SystemInformation.VirtualScreen);
         }
     }
 }

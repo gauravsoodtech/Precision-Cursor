@@ -2,11 +2,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrecisionCursor.Core", "src\PrecisionCursor.Core\PrecisionCursor.Core.csproj", "{19E0A640-9C7C-493D-8B30-A087D4410E10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DpiAssistant.Core", "src\DpiAssistant.Core\DpiAssistant.Core.csproj", "{19E0A640-9C7C-493D-8B30-A087D4410E10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrecisionCursor", "src\PrecisionCursor\PrecisionCursor.csproj", "{6F74E84E-4A23-4A83-880A-C82A06CA7767}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DpiAssistant", "src\DpiAssistant\DpiAssistant.csproj", "{6F74E84E-4A23-4A83-880A-C82A06CA7767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrecisionCursor.Tests", "tests\PrecisionCursor.Tests\PrecisionCursor.Tests.csproj", "{71C4D090-0EA9-4939-B450-E3EF339AB712}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DpiAssistant.Tests", "tests\DpiAssistant.Tests\DpiAssistant.Tests.csproj", "{71C4D090-0EA9-4939-B450-E3EF339AB712}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,23 +3,32 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace PrecisionCursor
+namespace DpiAssistant
 {
     internal sealed class RawMouseInputWindow : NativeWindow, IDisposable
     {
+        private readonly Func<bool> _shouldProcessInput;
+        private readonly RawInputBuffer _rawInputBuffer = new RawInputBuffer();
         private bool _disposed;
 
         public RawMouseInputWindow()
+            : this(null)
         {
+        }
+
+        public RawMouseInputWindow(Func<bool> shouldProcessInput)
+        {
+            _shouldProcessInput = shouldProcessInput;
+
             CreateHandle(new CreateParams
             {
-                Caption = "PrecisionCursorRawInputSink"
+                Caption = "DpiAssistantRawInputSink"
             });
 
             RegisterForRawMouseInput();
         }
 
-        public event EventHandler<RawMouseDeltaEventArgs> MouseMoved;
+        public event RawMouseDeltaHandler MouseMoved;
 
         public void Dispose()
         {
@@ -31,12 +40,13 @@ namespace PrecisionCursor
             _disposed = true;
             UnregisterRawMouseInput();
             DestroyHandle();
+            _rawInputBuffer.Dispose();
             GC.SuppressFinalize(this);
         }
 
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == NativeMethods.WM_INPUT)
+            if (m.Msg == NativeMethods.WM_INPUT && ShouldProcessInput())
             {
                 ProcessRawInput(m.LParam);
             }
@@ -61,51 +71,49 @@ namespace PrecisionCursor
                 return;
             }
 
-            IntPtr buffer = Marshal.AllocHGlobal((int)size);
+            IntPtr buffer = _rawInputBuffer.EnsureCapacity(size);
 
-            try
+            uint readResult = NativeMethods.GetRawInputData(
+                rawInputHandle,
+                NativeMethods.RID_INPUT,
+                buffer,
+                ref size,
+                headerSize);
+
+            if (readResult != size)
             {
-                uint readResult = NativeMethods.GetRawInputData(
-                    rawInputHandle,
-                    NativeMethods.RID_INPUT,
+                return;
+            }
+
+            NativeMethods.RAWINPUT rawInput =
+                (NativeMethods.RAWINPUT)Marshal.PtrToStructure(
                     buffer,
-                    ref size,
-                    headerSize);
+                    typeof(NativeMethods.RAWINPUT));
 
-                if (readResult != size)
-                {
-                    return;
-                }
-
-                NativeMethods.RAWINPUT rawInput =
-                    (NativeMethods.RAWINPUT)Marshal.PtrToStructure(
-                        buffer,
-                        typeof(NativeMethods.RAWINPUT));
-
-                if (rawInput.header.dwType != NativeMethods.RIM_TYPEMOUSE)
-                {
-                    return;
-                }
-
-                int deltaX = rawInput.mouse.lLastX;
-                int deltaY = rawInput.mouse.lLastY;
-
-                if (deltaX == 0 && deltaY == 0)
-                {
-                    return;
-                }
-
-                EventHandler<RawMouseDeltaEventArgs> handler = MouseMoved;
-
-                if (handler != null)
-                {
-                    handler(this, new RawMouseDeltaEventArgs(deltaX, deltaY));
-                }
-            }
-            finally
+            if (rawInput.header.dwType != NativeMethods.RIM_TYPEMOUSE)
             {
-                Marshal.FreeHGlobal(buffer);
+                return;
             }
+
+            int deltaX = rawInput.mouse.lLastX;
+            int deltaY = rawInput.mouse.lLastY;
+
+            if (deltaX == 0 && deltaY == 0)
+            {
+                return;
+            }
+
+            RawMouseDeltaHandler handler = MouseMoved;
+
+            if (handler != null)
+            {
+                handler(this, deltaX, deltaY);
+            }
+        }
+
+        private bool ShouldProcessInput()
+        {
+            return _shouldProcessInput == null || _shouldProcessInput();
         }
 
         private void RegisterForRawMouseInput()
@@ -152,16 +160,5 @@ namespace PrecisionCursor
         }
     }
 
-    internal sealed class RawMouseDeltaEventArgs : EventArgs
-    {
-        public RawMouseDeltaEventArgs(int deltaX, int deltaY)
-        {
-            DeltaX = deltaX;
-            DeltaY = deltaY;
-        }
-
-        public int DeltaX { get; private set; }
-
-        public int DeltaY { get; private set; }
-    }
+    internal delegate void RawMouseDeltaHandler(object sender, int deltaX, int deltaY);
 }

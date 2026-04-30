@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace PrecisionCursor.Core
+namespace DpiAssistant.Core
 {
     public sealed class AdaptiveLineLock
     {

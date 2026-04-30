@@ -1,4 +1,4 @@
-namespace PrecisionCursor.Core
+namespace DpiAssistant.Core
 {
     public static class MouseMoveSuppressionPolicy
     {

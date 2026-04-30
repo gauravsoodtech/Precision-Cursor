@@ -3,11 +3,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace PrecisionCursor
+namespace DpiAssistant
 {
     internal sealed class KeyboardHookService : IDisposable
     {
-        private const int VkEscape = 0x1B;
         private const int VkL = 0x4C;
         private const int VkControl = 0x11;
         private const int VkMenu = 0x12;
@@ -17,26 +16,19 @@ namespace PrecisionCursor
         private const int VkRightMenu = 0xA5;
 
         private readonly Action _toggle;
-        private readonly Action _forceDisable;
         private readonly NativeMethods.LowLevelKeyboardProc _hookCallback;
         private IntPtr _hookId = IntPtr.Zero;
         private bool _toggleChordDown;
         private bool _disposed;
 
-        public KeyboardHookService(Action toggle, Action forceDisable)
+        public KeyboardHookService(Action toggle)
         {
             if (toggle == null)
             {
                 throw new ArgumentNullException("toggle");
             }
 
-            if (forceDisable == null)
-            {
-                throw new ArgumentNullException("forceDisable");
-            }
-
             _toggle = toggle;
-            _forceDisable = forceDisable;
             _hookCallback = HookCallback;
         }
 
@@ -86,11 +78,6 @@ namespace PrecisionCursor
                             typeof(NativeMethods.KBDLLHOOKSTRUCT));
 
                     int vkCode = unchecked((int)hookData.vkCode);
-
-                    if (isKeyDown && vkCode == VkEscape)
-                    {
-                        _forceDisable();
-                    }
 
                     if (isKeyDown && vkCode == VkL && IsControlDown() && IsAltDown())
                     {

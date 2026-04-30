@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace PrecisionCursor.Core
+namespace DpiAssistant.Core
 {
     public sealed class RelativeLineLock
     {
@@ -28,6 +28,11 @@ namespace PrecisionCursor.Core
         private double _pendingY;
         private double _turnX;
         private double _turnY;
+        private bool _hasMovementBounds;
+        private double _minimumX;
+        private double _minimumY;
+        private double _maximumX;
+        private double _maximumY;
         private Direction? _currentDirection;
 
         public RelativeLineLock(Point start)
@@ -35,8 +40,25 @@ namespace PrecisionCursor.Core
         {
         }
 
+        public RelativeLineLock(Point start, Rectangle movementBounds)
+            : this(
+                new PointF(start.X, start.Y),
+                new RectangleF(
+                    movementBounds.X,
+                    movementBounds.Y,
+                    movementBounds.Width,
+                    movementBounds.Height))
+        {
+        }
+
         public RelativeLineLock(PointF start)
         {
+            Reset(start);
+        }
+
+        public RelativeLineLock(PointF start, RectangleF movementBounds)
+        {
+            SetMovementBounds(movementBounds);
             Reset(start);
         }
 
@@ -47,8 +69,10 @@ namespace PrecisionCursor.Core
 
         public void Reset(PointF start)
         {
-            _positionX = start.X;
-            _positionY = start.Y;
+            PointF boundedStart = ClampToMovementBounds(start);
+
+            _positionX = boundedStart.X;
+            _positionY = boundedStart.Y;
             _pendingX = 0.0;
             _pendingY = 0.0;
             _turnX = 0.0;
@@ -160,6 +184,46 @@ namespace PrecisionCursor.Core
 
             _positionX += projection * direction.X;
             _positionY += projection * direction.Y;
+            ClampPositionToMovementBounds();
+        }
+
+        private void SetMovementBounds(RectangleF movementBounds)
+        {
+            if (movementBounds.Width <= 0f || movementBounds.Height <= 0f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "movementBounds",
+                    "Movement bounds must have positive width and height.");
+            }
+
+            _hasMovementBounds = true;
+            _minimumX = movementBounds.Left;
+            _minimumY = movementBounds.Top;
+            _maximumX = Math.Max(_minimumX, movementBounds.Right - 1.0);
+            _maximumY = Math.Max(_minimumY, movementBounds.Bottom - 1.0);
+        }
+
+        private PointF ClampToMovementBounds(PointF point)
+        {
+            if (!_hasMovementBounds)
+            {
+                return point;
+            }
+
+            return new PointF(
+                (float)Clamp(point.X, _minimumX, _maximumX),
+                (float)Clamp(point.Y, _minimumY, _maximumY));
+        }
+
+        private void ClampPositionToMovementBounds()
+        {
+            if (!_hasMovementBounds)
+            {
+                return;
+            }
+
+            _positionX = Clamp(_positionX, _minimumX, _maximumX);
+            _positionY = Clamp(_positionY, _minimumY, _maximumY);
         }
 
         private static Direction FindClosestDirection(double deltaX, double deltaY)
@@ -189,6 +253,21 @@ namespace PrecisionCursor.Core
         private static double SquaredLength(double deltaX, double deltaY)
         {
             return deltaX * deltaX + deltaY * deltaY;
+        }
+
+        private static double Clamp(double value, double minimum, double maximum)
+        {
+            if (value < minimum)
+            {
+                return minimum;
+            }
+
+            if (value > maximum)
+            {
+                return maximum;
+            }
+
+            return value;
         }
 
         private static int RoundToInt(float value)

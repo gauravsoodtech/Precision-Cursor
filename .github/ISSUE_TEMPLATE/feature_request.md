@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an improvement for Precision Cursor
+about: Suggest an improvement for DPI Assistant
 title: "[Feature]: "
 labels: enhancement
 assignees: ""

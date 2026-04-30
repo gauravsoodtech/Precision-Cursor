@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("PrecisionCursor.Core")]
-[assembly: AssemblyDescription("Core geometry logic for Precision Cursor.")]
+[assembly: AssemblyTitle("DpiAssistant.Core")]
+[assembly: AssemblyDescription("Core geometry logic for DPI Assistant.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Precision Cursor")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Gaurav Sood")]
+[assembly: AssemblyProduct("DPI Assistant")]
+[assembly: AssemblyCopyright("Copyright (c) 2026 Gaurav Sood")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

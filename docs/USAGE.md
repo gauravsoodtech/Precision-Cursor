@@ -1,6 +1,6 @@
 # Usage
 
-Precision Cursor runs as a Windows tray app. It does not open a large main window.
+DPI Assistant runs as a Windows tray app. It does not open a large main window.
 
 ## Start the App
 
@@ -13,24 +13,24 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1 -Configuration Rele
 Run the executable:
 
 ```powershell
-.\src\PrecisionCursor\bin\Release\PrecisionCursor.exe
+.\src\DpiAssistant\bin\Release\DpiAssistant.exe
 ```
 
-Look for the Precision Cursor icon in the Windows tray.
+Look for the DPI Assistant icon in the Windows tray.
 
 ## Controls
 
 | Action | Control |
 | --- | --- |
 | Enable or disable line lock | `Ctrl+Alt+L` |
-| Disable immediately | `Esc` |
 | Toggle from tray | Double-click the tray icon |
 | Open controls | Right-click the tray icon |
+| Open safety details | Tray menu -> `About / Safety` |
 | Quit | Tray menu -> `Exit` |
 
 ## Movement Behavior
 
-When enabled, Precision Cursor detects your current movement direction and snaps the pointer to the nearest of these directions:
+When enabled, DPI Assistant detects your current movement direction and snaps the pointer to the nearest of these directions:
 
 - Left or right.
 - Up or down.
@@ -41,20 +41,20 @@ You do not need to hold a mouse button. The lock applies to normal cursor moveme
 
 ## Tips
 
-- Use `Esc` before switching to tasks that need fully free cursor movement.
+- Press `Ctrl+Alt+L` again before switching to tasks that need fully free cursor movement.
 - Move with a clear direction when starting a line so the lock can settle quickly.
 - If a diagonal looks too stepped in a drawing app, try slower movement or a lower mouse sensitivity.
-- If the app feels stuck, press `Esc` or exit from the tray menu.
+- If the app feels stuck, press `Ctrl+Alt+L` or exit from the tray menu.
 
 ## Troubleshooting
 
 ### The tray icon is hidden
 
-Open the Windows tray overflow menu and drag the Precision Cursor icon into the visible tray area.
+Open the Windows tray overflow menu and drag the DPI Assistant icon into the visible tray area.
 
 ### The hotkey does not toggle the app
 
-Another app may already be using `Ctrl+Alt+L`. Use the tray menu to toggle Precision Cursor, or close the conflicting app.
+Another app may already be using `Ctrl+Alt+L`. Use the tray menu to toggle DPI Assistant, or close the conflicting app.
 
 ### The app does not start
 

@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Precision Cursor")]
-[assembly: AssemblyDescription("Windows tray utility that locks cursor movement to horizontal, vertical, or diagonal lines.")]
+[assembly: AssemblyTitle("DPI Assistant")]
+[assembly: AssemblyDescription("Windows mouse utility for precise pointer movement and straight-line assistance.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Precision Cursor")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Gaurav Sood")]
+[assembly: AssemblyProduct("DPI Assistant")]
+[assembly: AssemblyCopyright("Copyright (c) 2026 Gaurav Sood")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace PrecisionCursor
+namespace DpiAssistant
 {
     internal static class NativeMethods
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace PrecisionCursor
+namespace DpiAssistant
 {
     internal static class Program
     {
@@ -21,8 +21,8 @@ namespace PrecisionCursor
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Precision Cursor could not start.\r\n\r\n" + ex.Message,
-                    "Precision Cursor",
+                    AppInfo.ProductName + " could not start.\r\n\r\n" + ex.Message,
+                    AppInfo.ProductName,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }

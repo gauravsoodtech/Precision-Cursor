@@ -1,8 +1,11 @@
 using System;
 using System.Drawing;
-using PrecisionCursor.Core;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using DpiAssistant;
+using DpiAssistant.Core;
 
-namespace PrecisionCursor.Tests
+namespace DpiAssistant.Tests
 {
     internal static class Program
     {
@@ -23,7 +26,13 @@ namespace PrecisionCursor.Tests
             Run("relative lock smooths alternating diagonal mouse packets", RelativeLockSmoothsAlternatingDiagonalMousePackets);
             Run("relative lock ignores side noise during vertical movement", RelativeLockIgnoresSideNoiseDuringVerticalMovement);
             Run("relative lock ignores vertical noise during horizontal movement", RelativeLockIgnoresVerticalNoiseDuringHorizontalMovement);
+            Run("relative lock does not accumulate off-screen debt at display corners", RelativeLockDoesNotAccumulateOffScreenDebtAtDisplayCorners);
             Run("suppression policy blocks only physical moves while enabled", SuppressionPolicyBlocksOnlyPhysicalMovesWhileEnabled);
+            Run("mouse hook processing policy skips disabled mouse moves", MouseHookProcessingPolicySkipsDisabledMouseMoves);
+            Run("raw input buffer reuses allocation for same sized packets", RawInputBufferReusesAllocationForSameSizedPackets);
+            Run("raw input window publishes deltas without event args allocation", RawInputWindowPublishesDeltasWithoutEventArgsAllocation);
+            Run("keyboard hook ignores Escape without disabling", KeyboardHookIgnoresEscapeWithoutDisabling);
+            Run("app identity describes a transparent DPI Assistant utility", AppIdentityDescribesTransparentDpiAssistantUtility);
 
             Console.WriteLine();
 
@@ -151,12 +160,140 @@ namespace PrecisionCursor.Tests
             AssertEqual(new Point(130, 100), lockState.ApplyDelta(10, 2));
         }
 
+        private static void RelativeLockDoesNotAccumulateOffScreenDebtAtDisplayCorners()
+        {
+            Rectangle bounds = new Rectangle(0, 0, 4, 4);
+
+            RelativeLineLock topLeftLock = new RelativeLineLock(new Point(1, 1), bounds);
+            AssertEqual(new Point(0, 0), topLeftLock.ApplyDelta(-20, -20));
+            AssertEqual(new Point(3, 0), topLeftLock.ApplyDelta(3, 0));
+
+            RelativeLineLock bottomRightLock = new RelativeLineLock(new Point(2, 2), bounds);
+            AssertEqual(new Point(3, 3), bottomRightLock.ApplyDelta(20, 20));
+            AssertEqual(new Point(0, 3), bottomRightLock.ApplyDelta(-3, 0));
+        }
+
         private static void SuppressionPolicyBlocksOnlyPhysicalMovesWhileEnabled()
         {
             AssertFalse(MouseMoveSuppressionPolicy.ShouldSuppress(false, false, false));
             AssertFalse(MouseMoveSuppressionPolicy.ShouldSuppress(true, true, false));
             AssertFalse(MouseMoveSuppressionPolicy.ShouldSuppress(true, false, true));
             AssertTrue(MouseMoveSuppressionPolicy.ShouldSuppress(true, false, false));
+        }
+
+        private static void MouseHookProcessingPolicySkipsDisabledMouseMoves()
+        {
+            AssertFalse(MouseHookProcessingPolicy.ShouldInspectMouseMove(0, 0x0200, false));
+            AssertFalse(MouseHookProcessingPolicy.ShouldInspectMouseMove(-1, 0x0200, true));
+            AssertFalse(MouseHookProcessingPolicy.ShouldInspectMouseMove(0, 0x0201, true));
+            AssertTrue(MouseHookProcessingPolicy.ShouldInspectMouseMove(0, 0x0200, true));
+        }
+
+        private static void RawInputBufferReusesAllocationForSameSizedPackets()
+        {
+            Type bufferType = typeof(AppInfo).Assembly.GetType("DpiAssistant.RawInputBuffer", true);
+            object buffer = Activator.CreateInstance(
+                bufferType,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                new object[0],
+                null);
+
+            try
+            {
+                MethodInfo ensureCapacity = bufferType.GetMethod(
+                    "EnsureCapacity",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+                IntPtr first = (IntPtr)ensureCapacity.Invoke(buffer, new object[] { 64u });
+                IntPtr second = (IntPtr)ensureCapacity.Invoke(buffer, new object[] { 64u });
+                IntPtr larger = (IntPtr)ensureCapacity.Invoke(buffer, new object[] { 128u });
+
+                AssertNotEqual(IntPtr.Zero, first);
+                AssertEqual(first, second);
+                AssertNotEqual(IntPtr.Zero, larger);
+            }
+            finally
+            {
+                ((IDisposable)buffer).Dispose();
+            }
+        }
+
+        private static void RawInputWindowPublishesDeltasWithoutEventArgsAllocation()
+        {
+            Type windowType = typeof(AppInfo).Assembly.GetType("DpiAssistant.RawMouseInputWindow", true);
+            EventInfo mouseMoved = windowType.GetEvent(
+                "MouseMoved",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            AssertEqual("DpiAssistant.RawMouseDeltaHandler", mouseMoved.EventHandlerType.FullName);
+        }
+
+        private static void KeyboardHookIgnoresEscapeWithoutDisabling()
+        {
+            int toggleCount = 0;
+            object keyboardHookService = CreateKeyboardHookService(
+                delegate { toggleCount++; });
+
+            IntPtr hookData = AllocateKeyboardHookData(0x1B);
+
+            try
+            {
+                InvokeKeyboardHook(keyboardHookService, 0x0100, hookData);
+
+                AssertEqual(0, toggleCount);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(hookData);
+                ((IDisposable)keyboardHookService).Dispose();
+            }
+        }
+
+        private static object CreateKeyboardHookService(Action toggle)
+        {
+            Type serviceType = typeof(AppInfo).Assembly.GetType("DpiAssistant.KeyboardHookService", true);
+
+            return Activator.CreateInstance(
+                serviceType,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                new object[] { toggle },
+                null);
+        }
+
+        private static void InvokeKeyboardHook(object keyboardHookService, int message, IntPtr hookData)
+        {
+            MethodInfo hookCallback = keyboardHookService.GetType().GetMethod(
+                "HookCallback",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+
+            hookCallback.Invoke(
+                keyboardHookService,
+                new object[] { 0, new IntPtr(message), hookData });
+        }
+
+        private static IntPtr AllocateKeyboardHookData(uint virtualKey)
+        {
+            KeyboardHookData data = new KeyboardHookData
+            {
+                vkCode = virtualKey
+            };
+
+            IntPtr pointer = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(KeyboardHookData)));
+            Marshal.StructureToPtr(data, pointer, false);
+            return pointer;
+        }
+
+        private static void AppIdentityDescribesTransparentDpiAssistantUtility()
+        {
+            AssertEqual("DPI Assistant", AppInfo.ProductName);
+            AssertEqual("DpiAssistant.exe", AppInfo.ExecutableName);
+            AssertContains(AppInfo.SafetyMessage, "documented Windows user-mode input APIs");
+            AssertContains(AppInfo.SafetyMessage, "does not install drivers");
+            AssertContains(AppInfo.SafetyMessage, "does not inject into games or apps");
+            AssertContains(AppInfo.SafetyMessage, "does not access the network");
+            AssertContains(AppInfo.SafetyMessage, "does not collect data");
         }
 
         private static void Run(string name, Action test)
@@ -213,6 +350,61 @@ namespace PrecisionCursor.Tests
             {
                 throw new InvalidOperationException("Expected false, got true.");
             }
+        }
+
+        private static void AssertEqual(string expected, string actual)
+        {
+            if (!string.Equals(expected, actual, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Expected \"{0}\", got \"{1}\".", expected, actual));
+            }
+        }
+
+        private static void AssertEqual(int expected, int actual)
+        {
+            if (expected != actual)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Expected {0}, got {1}.", expected, actual));
+            }
+        }
+
+        private static void AssertEqual(IntPtr expected, IntPtr actual)
+        {
+            if (expected != actual)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Expected {0}, got {1}.", expected, actual));
+            }
+        }
+
+        private static void AssertNotEqual(IntPtr unexpected, IntPtr actual)
+        {
+            if (unexpected == actual)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Did not expect {0}.", actual));
+            }
+        }
+
+        private static void AssertContains(string haystack, string needle)
+        {
+            if (haystack == null || haystack.IndexOf(needle, StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Expected text to contain \"{0}\".", needle));
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KeyboardHookData
+        {
+            public uint vkCode;
+            public uint scanCode;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
         }
     }
 }

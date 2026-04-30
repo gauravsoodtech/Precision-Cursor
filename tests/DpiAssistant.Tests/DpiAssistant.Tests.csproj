@@ -4,16 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F74E84E-4A23-4A83-880A-C82A06CA7767}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>PrecisionCursor</RootNamespace>
-    <AssemblyName>PrecisionCursor</AssemblyName>
+    <ProjectGuid>{71C4D090-0EA9-4939-B450-E3EF339AB712}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DpiAssistant.Tests</RootNamespace>
+    <AssemblyName>DpiAssistant.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <FileAlignment>512</FileAlignment>
-    <StartupObject>PrecisionCursor.Program</StartupObject>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <ApplicationIcon>Assets\precision-cursor.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,8 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,32 +28,24 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyboardHookService.cs" />
-    <Compile Include="MouseLockService.cs" />
-    <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RawMouseInputWindow.cs" />
-    <Compile Include="TrayAppContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <Content Include="Assets\precision-cursor.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PrecisionCursor.Core\PrecisionCursor.Core.csproj">
+    <ProjectReference Include="..\..\src\DpiAssistant\DpiAssistant.csproj">
+      <Project>{6F74E84E-4A23-4A83-880A-C82A06CA7767}</Project>
+      <Name>DpiAssistant</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DpiAssistant.Core\DpiAssistant.Core.csproj">
       <Project>{19E0A640-9C7C-493D-8B30-A087D4410E10}</Project>
-      <Name>PrecisionCursor.Core</Name>
+      <Name>DpiAssistant.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

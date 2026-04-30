@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Precision Cursor is intended to be a respectful, practical, and beginner-friendly project.
+DPI Assistant is intended to be a respectful, practical, and beginner-friendly project.
 
 ## Expected Behavior
 

@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace PrecisionCursor
+namespace DpiAssistant
 {
     internal sealed class TrayAppContext : ApplicationContext
     {
@@ -17,7 +17,7 @@ namespace PrecisionCursor
         public TrayAppContext()
         {
             _mouseLockService = new MouseLockService();
-            _keyboardHookService = new KeyboardHookService(ToggleLineLock, DisableLineLock);
+            _keyboardHookService = new KeyboardHookService(ToggleLineLock);
 
             _statusItem = new ToolStripMenuItem { Enabled = false };
             _toggleItem = new ToolStripMenuItem("Toggle\tCtrl+Alt+L", null, OnToggleClicked);
@@ -27,13 +27,15 @@ namespace PrecisionCursor
             menu.Items.Add(_statusItem);
             menu.Items.Add(_toggleItem);
             menu.Items.Add(new ToolStripSeparator());
+            menu.Items.Add(new ToolStripMenuItem("About / Safety", null, OnAboutSafetyClicked));
+            menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add(new ToolStripMenuItem("Exit", null, OnExitClicked));
 
             _trayIcon = new NotifyIcon
             {
                 ContextMenuStrip = menu,
                 Icon = _appIcon,
-                Text = "Precision Cursor - Disabled",
+                Text = AppInfo.ProductName + " - Disabled",
                 Visible = true
             };
 
@@ -58,17 +60,14 @@ namespace PrecisionCursor
             _mouseLockService.Toggle();
         }
 
-        private void DisableLineLock()
-        {
-            _mouseLockService.Disable();
-        }
-
         private void UpdateTrayState()
         {
             bool enabled = _mouseLockService.Enabled;
             _statusItem.Text = enabled ? "Enabled" : "Disabled";
             _toggleItem.Text = enabled ? "Disable\tCtrl+Alt+L" : "Enable\tCtrl+Alt+L";
-            _trayIcon.Text = enabled ? "Precision Cursor - Enabled" : "Precision Cursor - Disabled";
+            _trayIcon.Text = enabled
+                ? AppInfo.ProductName + " - Enabled"
+                : AppInfo.ProductName + " - Disabled";
         }
 
         private void OnMouseLockEnabledChanged(object sender, EventArgs e)
@@ -84,6 +83,15 @@ namespace PrecisionCursor
         private void OnTrayIconDoubleClick(object sender, EventArgs e)
         {
             ToggleLineLock();
+        }
+
+        private void OnAboutSafetyClicked(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                AppInfo.SafetyMessage,
+                AppInfo.ProductName + " - About / Safety",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         private void OnExitClicked(object sender, EventArgs e)

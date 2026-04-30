@@ -18,12 +18,12 @@ Describe the problem clearly.
 
 ## Expected behavior
 
-What did you expect Precision Cursor to do?
+What did you expect DPI Assistant to do?
 
 ## Environment
 
 - Windows version:
-- Precision Cursor version or commit:
+- DPI Assistant version or commit:
 - Mouse or touchpad model, if relevant:
 - App where the issue happened, if relevant:
 
