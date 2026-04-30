@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace MouseLineLock.Core
+namespace PrecisionCursor.Core
 {
     public sealed class AdaptiveLineLock
     {

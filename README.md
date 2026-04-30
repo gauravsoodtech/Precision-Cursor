@@ -1,6 +1,6 @@
-# Mouse Line Lock
+# Precision Cursor
 
-![Mouse Line Lock logo](assets/logo.png)
+![Precision Cursor logo](assets/logo.png)
 
 Windows tray utility that constrains global cursor movement to clean horizontal, vertical, or 45-degree diagonal lines while enabled.
 
@@ -26,7 +26,7 @@ When enabled, the app watches raw mouse movement and snaps each segment to the n
 
 ## How It Works
 
-Mouse Line Lock combines raw mouse input with a low-level mouse hook:
+Precision Cursor combines raw mouse input with a low-level mouse hook:
 
 - Raw input reads the real hardware movement delta.
 - The lock engine chooses the nearest 8-way direction and smooths noisy movement.
@@ -52,14 +52,14 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test.ps1
 After a Release build:
 
 ```powershell
-.\src\MouseLineLock\bin\Release\MouseLineLock.exe
+.\src\PrecisionCursor\bin\Release\PrecisionCursor.exe
 ```
 
 ## Project Structure
 
-- `src/MouseLineLock`: Windows Forms tray app, hooks, raw input.
-- `src/MouseLineLock.Core`: line snapping and smoothing logic.
-- `tests/MouseLineLock.Tests`: console test runner for core behavior.
+- `src/PrecisionCursor`: Windows Forms tray app, hooks, raw input.
+- `src/PrecisionCursor.Core`: line snapping and smoothing logic.
+- `tests/PrecisionCursor.Tests`: console test runner for core behavior.
 - `assets/logo.png`: project logo.
 
 ## Logo

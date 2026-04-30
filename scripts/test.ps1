@@ -11,7 +11,7 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-$testExe = Join-Path $root "tests\MouseLineLock.Tests\bin\$Configuration\MouseLineLock.Tests.exe"
+$testExe = Join-Path $root "tests\PrecisionCursor.Tests\bin\$Configuration\PrecisionCursor.Tests.exe"
 if (-not (Test-Path -LiteralPath $testExe)) {
     throw "Test executable was not found: $testExe"
 }

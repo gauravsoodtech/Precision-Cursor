@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace MouseLineLock
+namespace PrecisionCursor
 {
     internal sealed class RawMouseInputWindow : NativeWindow, IDisposable
     {
@@ -13,7 +13,7 @@ namespace MouseLineLock
         {
             CreateHandle(new CreateParams
             {
-                Caption = "MouseLineLockRawInputSink"
+                Caption = "PrecisionCursorRawInputSink"
             });
 
             RegisterForRawMouseInput();

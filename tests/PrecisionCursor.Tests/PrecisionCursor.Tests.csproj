@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{19E0A640-9C7C-493D-8B30-A087D4410E10}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>MouseLineLock.Core</RootNamespace>
-    <AssemblyName>MouseLineLock.Core</AssemblyName>
+    <ProjectGuid>{71C4D090-0EA9-4939-B450-E3EF339AB712}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PrecisionCursor.Tests</RootNamespace>
+    <AssemblyName>PrecisionCursor.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <FileAlignment>512</FileAlignment>
@@ -35,11 +35,14 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdaptiveLineLock.cs" />
-    <Compile Include="LineSnapper.cs" />
-    <Compile Include="MouseMoveSuppressionPolicy.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelativeLineLock.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PrecisionCursor.Core\PrecisionCursor.Core.csproj">
+      <Project>{19E0A640-9C7C-493D-8B30-A087D4410E10}</Project>
+      <Name>PrecisionCursor.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

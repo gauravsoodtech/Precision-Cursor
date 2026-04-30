@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace MouseLineLock
+namespace PrecisionCursor
 {
     internal static class Program
     {
@@ -21,8 +21,8 @@ namespace MouseLineLock
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Mouse Line Lock could not start.\r\n\r\n" + ex.Message,
-                    "Mouse Line Lock",
+                    "Precision Cursor could not start.\r\n\r\n" + ex.Message,
+                    "Precision Cursor",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }

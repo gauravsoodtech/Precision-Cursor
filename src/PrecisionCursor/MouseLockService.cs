@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MouseLineLock.Core;
+using PrecisionCursor.Core;
 
-namespace MouseLineLock
+namespace PrecisionCursor
 {
     internal sealed class MouseLockService : IDisposable
     {

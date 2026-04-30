@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MouseLineLock
+namespace PrecisionCursor
 {
     internal sealed class TrayAppContext : ApplicationContext
     {
@@ -33,7 +33,7 @@ namespace MouseLineLock
             {
                 ContextMenuStrip = menu,
                 Icon = _appIcon,
-                Text = "Mouse Line Lock - Disabled",
+                Text = "Precision Cursor - Disabled",
                 Visible = true
             };
 
@@ -68,7 +68,7 @@ namespace MouseLineLock
             bool enabled = _mouseLockService.Enabled;
             _statusItem.Text = enabled ? "Enabled" : "Disabled";
             _toggleItem.Text = enabled ? "Disable\tCtrl+Alt+L" : "Enable\tCtrl+Alt+L";
-            _trayIcon.Text = enabled ? "Mouse Line Lock - Enabled" : "Mouse Line Lock - Disabled";
+            _trayIcon.Text = enabled ? "Precision Cursor - Enabled" : "Precision Cursor - Disabled";
         }
 
         private void OnMouseLockEnabledChanged(object sender, EventArgs e)

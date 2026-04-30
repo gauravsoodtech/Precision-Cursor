@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("MouseLineLock.Core")]
-[assembly: AssemblyDescription("Core geometry logic for Mouse Line Lock.")]
+[assembly: AssemblyTitle("PrecisionCursor.Core")]
+[assembly: AssemblyDescription("Core geometry logic for Precision Cursor.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MouseLineLock")]
+[assembly: AssemblyProduct("Precision Cursor")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -1,4 +1,4 @@
-namespace MouseLineLock.Core
+namespace PrecisionCursor.Core
 {
     public static class MouseMoveSuppressionPolicy
     {

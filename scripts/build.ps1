@@ -6,7 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $PSScriptRoot
-$solution = Join-Path $root "MouseLineLock.sln"
+$solution = Join-Path $root "PrecisionCursor.sln"
 
 $programFilesX86 = [Environment]::GetFolderPath("ProgramFilesX86")
 $candidates = @(

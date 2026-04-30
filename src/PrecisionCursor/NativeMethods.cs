@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace MouseLineLock
+namespace PrecisionCursor
 {
     internal static class NativeMethods
     {

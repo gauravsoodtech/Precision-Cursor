@@ -1,8 +1,8 @@
 using System;
 using System.Drawing;
-using MouseLineLock.Core;
+using PrecisionCursor.Core;
 
-namespace MouseLineLock.Tests
+namespace PrecisionCursor.Tests
 {
     internal static class Program
     {

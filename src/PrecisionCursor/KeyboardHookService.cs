@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace MouseLineLock
+namespace PrecisionCursor
 {
     internal sealed class KeyboardHookService : IDisposable
     {
