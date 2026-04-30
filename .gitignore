@@ -4,3 +4,9 @@ obj/
 *.suo
 *.cache
 .vs/
+*.pdb
+*.log
+*.tmp
+*.env
+*.local
+appsettings.*.json
